@@ -21,7 +21,7 @@ from miscc.utils import KL_loss
 from miscc.utils import compute_discriminator_loss, compute_generator_loss
 
 from tensorboard import summary
-from tensorboard import FileWriter
+import tensorflow as tf
 
 
 class GANTrainer(object):
@@ -33,16 +33,18 @@ class GANTrainer(object):
             mkdir_p(self.model_dir)
             mkdir_p(self.image_dir)
             mkdir_p(self.log_dir)
-            self.summary_writer = FileWriter(self.log_dir)
+            self.summary_writer = tf.summary.FileWriter(self.log_dir)
 
         self.max_epoch = cfg.TRAIN.MAX_EPOCH
         self.snapshot_interval = cfg.TRAIN.SNAPSHOT_INTERVAL
 
         s_gpus = cfg.GPU_ID.split(',')
+        print(cfg.GPU_ID)
+        print(s_gpus)
         self.gpus = [int(ix) for ix in s_gpus]
         self.num_gpus = len(self.gpus)
         self.batch_size = cfg.TRAIN.BATCH_SIZE * self.num_gpus
-        torch.cuda.set_device(self.gpus[0])
+###        torch.cuda.set_device(self.gpus[0])
         cudnn.benchmark = True
 
     # ############# For training stageI GAN #############
@@ -59,7 +61,8 @@ class GANTrainer(object):
             state_dict = \
                 torch.load(cfg.NET_G,
                            map_location=lambda storage, loc: storage)
-            netG.load_state_dict(state_dict)
+            # print(type(state_dict))
+            netG.load_state_dict(state_dict, False)
             print('Load from: ', cfg.NET_G)
         if cfg.NET_D != '':
             state_dict = \
@@ -274,8 +277,11 @@ class GANTrainer(object):
             ######################################################
             noise.data.normal_(0, 1)
             inputs = (txt_embedding, noise)
+            res = netG(txt_embedding, noise)
+            print(res)
             _, fake_imgs, mu, logvar = \
-                nn.parallel.data_parallel(netG, inputs, self.gpus)
+                netG(txt_embedding, noise)
+                # nn.parallel.data_parallel(netG, inputs, self.gpus)
             for i in range(batch_size):
                 save_name = '%s/%d.png' % (save_dir, count + i)
                 im = fake_imgs[i].data.cpu().numpy()

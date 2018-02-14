@@ -111,6 +111,7 @@ class STAGE1_G(nn.Module):
         self.ef_dim = cfg.GAN.CONDITION_DIM
         self.z_dim = cfg.Z_DIM
         self.define_module()
+        self.state_dict()
 
     def define_module(self):
         ninput = self.z_dim + self.ef_dim

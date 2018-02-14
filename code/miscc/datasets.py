@@ -120,6 +120,7 @@ class TextDataset(data.Dataset):
 
     def load_filenames(self, data_dir):
         filepath = os.path.join(data_dir, 'filenames.pickle')
+        print(os.path.abspath(filepath))
         with open(filepath, 'rb') as f:
             filenames = pickle.load(f)
         print('Load filenames from: %s (%d)' % (filepath, len(filenames)))

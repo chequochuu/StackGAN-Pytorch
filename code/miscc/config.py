@@ -10,11 +10,11 @@ __C = edict()
 cfg = __C
 
 # Dataset name: flowers, birds
-__C.DATASET_NAME = 'birds'
+__C.DATASET_NAME = 'flowers'
 __C.EMBEDDING_TYPE = 'cnn-rnn'
 __C.CONFIG_NAME = ''
-__C.GPU_ID = '0'
-__C.CUDA = True
+__C.GPU_ID = ''
+__C.CUDA = False
 __C.WORKERS = 6
 
 __C.NET_G = ''
@@ -30,7 +30,7 @@ __C.STAGE = 1
 
 # Training options
 __C.TRAIN = edict()
-__C.TRAIN.FLAG = True
+__C.TRAIN.FLAG = False
 __C.TRAIN.BATCH_SIZE = 64
 __C.TRAIN.MAX_EPOCH = 600
 __C.TRAIN.SNAPSHOT_INTERVAL = 50
